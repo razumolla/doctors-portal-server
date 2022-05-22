@@ -20,6 +20,7 @@ async function run() {
         console.log("Database Connected");
         const serviceCollection = client.db("doctors_portal").collection("services");
 
+        // get data from server
         app.get('/services', async (req, res) => {
             const query = {};
             const cursor = serviceCollection.find(query);
@@ -29,8 +30,9 @@ async function run() {
 
 
 
+
     } finally {
-        //   await client.close();
+
     }
 }
 run().catch(console.dir);
