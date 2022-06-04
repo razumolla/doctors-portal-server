@@ -39,17 +39,26 @@ async function run() {
         const doctorCollection = client.db("doctors_portal").collection("doctors");
 
         // verifyAdmin
+        // const verifyAdmin = async (req, res, next) => {
+        //     const requester = req.decoded.email;
+        //     const requesterAccount = await userCollection.findOne({ email: requester });
+        //     if (requesterAccount.role === 'admin') {
+        //         next()
+        //     }
+        //     else {
+        //         res.status(403).send({ message: "Forbidden" })
+        //     }
+        // }
         const verifyAdmin = async (req, res, next) => {
             const requester = req.decoded.email;
             const requesterAccount = await userCollection.findOne({ email: requester });
             if (requesterAccount.role === 'admin') {
-                next()
+                next();
             }
             else {
-                res.status(403).send({ message: "Forbidden" })
+                res.status(403).send({ message: 'forbidden' });
             }
         }
-
 
         // get appointment services data from server
         app.get('/services', async (req, res) => {
@@ -167,6 +176,11 @@ async function run() {
             return res.send({ success: true, result });
         })
 
+        // get data from doctors
+        app.get('/doctor',verifyJWT, verifyAdmin, async (req, res) => {
+            const doctors = await doctorCollection.find().toArray();
+            res.send(doctors);
+        })
 
         // post doctors from add new doctor
         app.post('/doctor', verifyJWT, verifyAdmin, async (req, res) => {
